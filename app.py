@@ -9,7 +9,7 @@ import sqlite3
 from sqlite3 import Error
 
 app = Flask(__name__)
-DATA_BASE = "C:/Users/18308/OneDrive - Wellington College/13DTS/Maori-Dictionary/maoridictionary"
+DATA_BASE = "C:/Users/18308/OneDrive - Wellington College/13DTS/Maori_Dictionary/identifier.sqlite"
 app.secret_key = "duncan"
 
 
@@ -25,7 +25,7 @@ def create_connection(db_file):
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    return render_template("home.html", logged_in=is_logged_in())
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -37,7 +37,7 @@ def login():
         email = request.form["email"].strip().lower()
         password = request.form["password"].strip()
 
-        query = """SELECT id, First_name, Password FROM users WHERE Email = ?"""
+        query = """SELECT id, firstname, password FROM users WHERE email = ?"""
         con = create_connection(DATA_BASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -46,7 +46,7 @@ def login():
 
         try:
             user_id = user_data[0][0]
-            first_name = user_data[0][1]
+            firstname = user_data[0][1]
             db_password = user_data[0][2]
         except IndexError:
             return redirect("/login?error=Email+Invalid+or+Password+Incorrect")
@@ -54,7 +54,7 @@ def login():
 
         session["email"] = email
         session["user_id"] = user_id
-        session["first_name"] = first_name
+        session["first_name"] = firstname
         print(session)
 
         if db_password != password:
@@ -89,10 +89,10 @@ def signup():
 
         con = create_connection(DATA_BASE)
 
-        query = "INSERT INTO users (First_name, Last_name, Email, Password, Confirmpassword) VALUES(?, ?, ?, ?, ?)"
+        query = "INSERT INTO users (firstname, lastname, email, password, ) VALUES(?, ?, ?, ?, ?)"
 
         cur = con.cursor()
-        cur.execute(query, (firstname, lastname, email, password, confirmpassword))
+        cur.execute(query, (firstname, lastname, email, password, ))
         con.commit()
         con.close()
 

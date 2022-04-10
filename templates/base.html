@@ -1,59 +1,58 @@
-
 <!doctype html>
 <html lang="en">
 <head>
-	<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Suez+One&display=swap" rel="stylesheet">
-	<title>{% block title %}{% endblock %}</title>
-	<meta name="Description" content="Author: D Benseman, Content: A dictionary to convert maori words to english.">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&family=Suez+One&display=swap" rel="stylesheet">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="Description" content="Author: D Benseman, Content: A dictionary to convert maori words to english.">
 </head>
 
 <body>
-	<div id="container">
+<div id="container">
 
-		<header>
-			<h1>{% block heading %} {% endblock %}</h1>
-		</header>
+    <header>
+        <h1>{% block heading %} {% endblock %}</h1>
+    </header>
 
-		<nav>
-            <input type="checkbox" name="drop_down_menu" />
-			<span></span>
-			<span></span>
-			<span></span>
-			<ul>
-                <li><a href="/">Home</a></li>
-                <li><p>--------------------------</p></li>
+    <nav>
+        <input type="checkbox" name="drop_down_menu"/>
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><p>--------------------------</p></li>
 
-                {% if logged_in %}
-                    <li><a href="/logout">Log Out</a></li>
-                Logged In
-                {% else %}
-                <li><a href="/login">Log In</a></li>
-                Not Logged In
-                {% endif %}
+            {% if logged_in %}
+            <li><a href="/logout">Log Out</a></li>
 
-			</ul>
-		</nav>
+            {% else %}
+            <li><a href="/login">Log In</a></li>
 
+            {% endif %}
 
-		<!--
-		=====================================================
-		== Content row of the template.                 ==
-		=====================================================
-		-->
-
-		<main>
-            {% block main %}{% endblock %}
-        </main>
+        </ul>
+    </nav>
 
 
-		<footer>
-			<p>
-				&copy; Duncan Manfrinati 2022
-			</p>
-		</footer>
+    <!--
+    =====================================================
+    == Content row of the template.                 ==
+    =====================================================
+    -->
 
-	</div>
+    <main>
+        {% block main %}{% endblock %}
+    </main>
+
+
+    <footer>
+        <p>
+            &copy; Duncan Manfrinati 2022
+        </p>
+    </footer>
+
+</div>
 </body>
 </html>

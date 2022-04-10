@@ -30,7 +30,7 @@ main {
 h1, h2, h3, h4 {
     padding: 1rem 0;
     font-family: 'Suez One', serif;
-    color: #000;
+    color: #000000;
     text-shadow: 2px 2px 4px #fff;
 }
 
@@ -88,7 +88,7 @@ th, td {
     text-align: left;
 }
 th {
-    background-color: #000;
+    background-color: #000000;
     color: #fff;
 }
 
@@ -284,7 +284,7 @@ footer img {
     }
 
     main {
-        background-image: url('/poutama.jpg');
+        background-image: url("/poutama.jpg");
     }
     .formRow {
         display: grid;
