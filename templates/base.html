@@ -29,6 +29,9 @@
 
             {% else %}
             <li><a href="/login">Log In</a></li>
+            {% for category in categories %}
+            <a>{{ category[0] }}</a>
+            {% endfor %}
 
             {% endif %}
 

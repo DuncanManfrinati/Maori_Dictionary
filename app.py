@@ -25,7 +25,8 @@ def create_connection(db_file):
 
 @app.route('/')
 def home():
-    return render_template("home.html", logged_in=is_logged_in())
+
+    return render_template("home.html", logged_in=is_logged_in(),categories=categories())
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -92,7 +93,7 @@ def signup():
         query = "INSERT INTO users (firstname, lastname, email, password, ) VALUES(?, ?, ?, ?, ?)"
 
         cur = con.cursor()
-        cur.execute(query, (firstname, lastname, email, password, ))
+        cur.execute(query, (firstname, lastname, email, password,))
         con.commit()
         con.close()
 
@@ -116,6 +117,19 @@ def is_logged_in():
     else:
         print("Logged In")
         return True
+
+
+def categories():
+    query = "SELECT categories FROM categories"
+    con = create_connection(DATA_BASE)
+    cur = con.cursor
+    category_ids = cur.fetchall()
+    cur.execute(query)
+    con.commit()
+    con.close()
+
+    return category_ids
+
 
 
 if __name__ == '__main__':
