@@ -22,17 +22,22 @@
         <span></span>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><p>--------------------------</p></li>
 
             {% if logged_in %}
+            {% for category in categories %}
+            <li><a href="/{{ category[0] }}">{{ category[0] }}</a></li>
+
+            {% endfor %}
+            <li><p>--------------------------</p></li>
             <li><a href="/logout">Log Out</a></li>
 
             {% else %}
-            <li><a href="/login">Log In</a></li>
             {% for category in categories %}
-            <a>{{ category[0] }}</a>
-            {% endfor %}
+            <li><a href="/{{ category[0] }}">{{ category[0] }}</a></li>
 
+            {% endfor %}
+            <li><p>--------------------------</p></li>
+            <li><a href="/login">Log In</a></li>
             {% endif %}
 
         </ul>

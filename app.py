@@ -25,14 +25,20 @@ def create_connection(db_file):
 
 @app.route('/')
 def home():
+    if is_logged_in():
+        return redirect("/betterhome")
 
     return render_template("home.html", logged_in=is_logged_in(),categories=categories())
 
+@app.route('/betterhome')
+def better_home():
+
+    return render_template("betterhome.html", logged_in=is_logged_in(), categories=categories())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if is_logged_in():
-        return redirect("/")
+        return redirect("/betterhome")
 
     if request.method == "POST":
         email = request.form["email"].strip().lower()
@@ -120,12 +126,13 @@ def is_logged_in():
 
 
 def categories():
-    query = "SELECT categories FROM categories"
+
     con = create_connection(DATA_BASE)
-    cur = con.cursor
-    category_ids = cur.fetchall()
+    query = "SELECT categories FROM categories"
+    cur = con.cursor()
     cur.execute(query)
-    con.commit()
+
+    category_ids = cur.fetchall()
     con.close()
 
     return category_ids
