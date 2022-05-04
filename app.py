@@ -25,8 +25,7 @@ def create_connection(db_file):
 
 @app.route('/')
 def home():
-    if is_logged_in():
-        return redirect("/betterhome")
+
 
     return render_template("home.html", logged_in=is_logged_in(),categories=categories())
 
@@ -38,7 +37,7 @@ def better_home():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if is_logged_in():
-        return redirect("/betterhome")
+        return redirect("/")
 
     if request.method == "POST":
         email = request.form["email"].strip().lower()
