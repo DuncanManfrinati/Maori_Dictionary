@@ -23,19 +23,28 @@ def create_connection(db_file):
     return None
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
+    # adding categories
+    if request.method == "POST":
+        category = request.form.get("category").strip().lower()
+        con = create_connection(DATA_BASE)
 
+        query = "INSERT INTO categories(categories) VALUES(?)"
 
+        cur = con.cursor()
+        cur.execute(query, (category, ))
+        con.commit()
+        con.close()
+
+        return redirect("/login")
     return render_template("home.html", logged_in=is_logged_in(),categories=categories())
 
-@app.route('/betterhome')
-def better_home():
 
-    return render_template("betterhome.html", logged_in=is_logged_in(), categories=categories())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    #logging into the website
     if is_logged_in():
         return redirect("/")
 
@@ -73,6 +82,7 @@ def login():
 
 
 @app.route('/signup', methods=['POST', 'GET'])
+#creating an account for the website
 def signup():
     if request.method == 'POST':
         print(request.form)
@@ -95,7 +105,7 @@ def signup():
 
         con = create_connection(DATA_BASE)
 
-        query = "INSERT INTO users (firstname, lastname, email, password, ) VALUES(?, ?, ?, ?, ?)"
+        query = "INSERT INTO users (firstname, lastname, email, password, ) VALUES(?, ?, ?, ?)"
 
         cur = con.cursor()
         cur.execute(query, (firstname, lastname, email, password,))
@@ -125,16 +135,28 @@ def is_logged_in():
 
 
 def categories():
-
     con = create_connection(DATA_BASE)
-    query = "SELECT categories FROM categories"
+    query = "SELECT id,categories FROM categories"
     cur = con.cursor()
-    cur.execute(query)
+    cur.execute(query,)
 
     category_ids = cur.fetchall()
+    print(category_ids)
     con.close()
 
     return category_ids
+
+@app.route("/category/<category_id>")
+def category(category_id):
+    con = create_connection(DATA_BASE)
+    query = "SELECT * FROM dictionary"
+    cur = con.cursor()
+    cur.execute(query, )
+
+    cat = cur.fetchall()
+    con.close()
+
+    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat)
 
 
 
