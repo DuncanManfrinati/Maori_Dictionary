@@ -141,7 +141,6 @@ def categories():
     cur.execute(query,)
 
     category_ids = cur.fetchall()
-    print(category_ids)
     con.close()
 
     return category_ids
@@ -151,12 +150,14 @@ def category(category_id):
     con = create_connection(DATA_BASE)
     query = "SELECT * FROM dictionary"
     cur = con.cursor()
-    cur.execute(query, )
-
+    cur.execute(query)
     cat = cur.fetchall()
+
+
+
     con.close()
 
-    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat)
+    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat, categories=categories())
 
 
 
