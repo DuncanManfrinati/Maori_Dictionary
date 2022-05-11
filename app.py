@@ -147,32 +147,43 @@ def categories():
 
 @app.route("/category/<category_id>", methods=['POST', 'GET'])
 def category(category_id):
-    con = create_connection(DATA_BASE)
-    query = "SELECT id, maori, english, image FROM dictionary WHERE category_id=?;"
-    cur = con.cursor()
-    cur.execute(query, (category_id,))
-    cat = cur.fetchall()
-
     if request.method == 'POST':
         maori = request.form.get('maori')
         english = request.form.get('english')
         definition = request.form.get('definition')
         level = request.form.get('level')
+        image = "noimage.png"
 
         con = create_connection(DATA_BASE)
-
-        query = "INSERT INTO dictionary (maori, english, definition, level, ) VALUES(?, ?, ?, ?)"
+        print(category_id)
+        query = "INSERT INTO dictionary (id, maori, english, category_id, definition, level, image ) VALUES(null , ?, ?, ?, ?, ?, ?)"
 
         cur = con.cursor()
-        cur.execute(query, (maori, english, definition, level, ))
+        cur.execute(query, (maori, english, category_id, definition, level, image,))
         con.commit()
         con.close()
 
+    con = create_connection(DATA_BASE)
+    query = "SELECT id, maori, english, image FROM dictionary WHERE category_id=?;"
+    cur = con.cursor()
+    cur.execute(query, (category_id,))
+    cat = cur.fetchall()
     con.close()
 
     return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
                            categories=categories())
 
+@app.route("/dictionary/<id>", methods=['POST', 'GET'])
+def dictionary(id):
+    con = create_connection(DATA_BASE)
+    query = "SELECT id, maori, english, image, level, time, user_id FROM dictionary WHERE id=?;"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    word = cur.fetchall()
+    con.close()
+
+    return render_template("word.html", logged_in=is_logged_in(), word=word, id=id,
+                           categories=categories())
 
 if __name__ == '__main__':
     app.run()
