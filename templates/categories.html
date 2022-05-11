@@ -11,20 +11,15 @@
     <tr>
         <td>Maōri</td>
         <td>English</td>
-        <td>Definition</td>
-        <td>Level</td>
         <td>Image</td>
     </tr>
     </thead>
     <tbody>
     {% for words in cat %}
     <tr>
-        {% if words[2] == category_ids %}
-        <td>{{ words[1] }}</td>
+        <td><a href="/word/{{ words[0] }}">{{ words[1] }}</a></td>
         <td>{{ words[2] }}</td>
-        <td>{{ words[3] }}</td>
-        <td>{{ words[4] }}</td>
-        {% endif %}
+        <td width="100"><img src="/static/images/{{ words[3] }}"></td>
     </tr>
     </tbody>
     {% endfor %}

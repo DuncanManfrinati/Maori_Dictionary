@@ -33,18 +33,17 @@ def home():
         query = "INSERT INTO categories(categories) VALUES(?)"
 
         cur = con.cursor()
-        cur.execute(query, (category, ))
+        cur.execute(query, (category,))
         con.commit()
         con.close()
 
         return redirect("/login")
-    return render_template("home.html", logged_in=is_logged_in(),categories=categories())
-
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories())
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    #logging into the website
+    # logging into the website
     if is_logged_in():
         return redirect("/")
 
@@ -82,7 +81,7 @@ def login():
 
 
 @app.route('/signup', methods=['POST', 'GET'])
-#creating an account for the website
+# creating an account for the website
 def signup():
     if request.method == 'POST':
         print(request.form)
@@ -138,27 +137,41 @@ def categories():
     con = create_connection(DATA_BASE)
     query = "SELECT id,categories FROM categories"
     cur = con.cursor()
-    cur.execute(query,)
+    cur.execute(query, )
 
     category_ids = cur.fetchall()
     con.close()
 
     return category_ids
 
-@app.route("/category/<category_id>")
+
+@app.route("/category/<category_id>", methods=['POST', 'GET'])
 def category(category_id):
     con = create_connection(DATA_BASE)
-    query = "SELECT * FROM dictionary"
+    query = "SELECT id, maori, english, image FROM dictionary WHERE category_id=?;"
     cur = con.cursor()
-    cur.execute(query)
+    cur.execute(query, (category_id,))
     cat = cur.fetchall()
 
+    if request.method == 'POST':
+        maori = request.form.get('maori')
+        english = request.form.get('english')
+        definition = request.form.get('definition')
+        level = request.form.get('level')
 
+        con = create_connection(DATA_BASE)
+
+        query = "INSERT INTO dictionary (maori, english, definition, level, ) VALUES(?, ?, ?, ?)"
+
+        cur = con.cursor()
+        cur.execute(query, (maori, english, definition, level, ))
+        con.commit()
+        con.close()
 
     con.close()
 
-    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat, categories=categories())
-
+    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
+                           categories=categories())
 
 
 if __name__ == '__main__':
