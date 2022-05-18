@@ -41,7 +41,7 @@
     <div class="form-group">
         <div class="form-label">Level:</div>
         {% for i in range(10) %}
-            <input type="radio" id="level" name="level" value="1">
+            <input type="radio" id="level" name="level" value="1" required>
             <label for="{{ i + 1 }}">{{i + 1}}</label>
         {% endfor %}
     </div>

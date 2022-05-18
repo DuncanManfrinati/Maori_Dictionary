@@ -156,7 +156,7 @@ def category(category_id):
 
         con = create_connection(DATA_BASE)
         print(category_id)
-        query = "INSERT INTO dictionary (id, maori, english, category_id, definition, level, image ) VALUES(null , ?, ?, ?, ?, ?, ?)"
+        query = "INSERT INTO dictionary (id, maori, english, category_id, definition, level, image, time ) VALUES(null , ?, ?, ?, ?, ?, ?, ?)"
 
         cur = con.cursor()
         cur.execute(query, (maori, english, category_id, definition, level, image,))
@@ -173,8 +173,25 @@ def category(category_id):
     return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
                            categories=categories())
 
-@app.route("/dictionary/<id>", methods=['POST', 'GET'])
+
+@app.route("/word/<id>", methods=['POST', 'GET'])
 def dictionary(id):
+    if request.method == 'POST':
+        editmaori = request.form.get('editmaori')
+        editenglish = request.form.get('editenglish')
+        editlevel = request.form.get('editlevel')
+        newtime = datetime.now()
+
+        con = create_connection(DATA_BASE)
+        print(id)
+        query = "UPDATE dictionary SET maori = ?, english = ?, level = ?, time = ? WHERE id=? ;"
+
+        cur = con.cursor()
+        cur.execute(query, (editmaori, editenglish, editlevel, newtime,id))
+        con.commit()
+        con.close()
+
+    id = int(id)
     con = create_connection(DATA_BASE)
     query = "SELECT id, maori, english, image, level, time, user_id FROM dictionary WHERE id=?;"
     cur = con.cursor()
@@ -184,6 +201,7 @@ def dictionary(id):
 
     return render_template("word.html", logged_in=is_logged_in(), word=word, id=id,
                            categories=categories())
+
 
 if __name__ == '__main__':
     app.run()
