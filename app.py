@@ -153,13 +153,14 @@ def category(category_id):
         definition = request.form.get('definition')
         level = request.form.get('level')
         image = "noimage.png"
+        time = datetime.now()
 
         con = create_connection(DATA_BASE)
         print(category_id)
         query = "INSERT INTO dictionary (id, maori, english, category_id, definition, level, image, time ) VALUES(null , ?, ?, ?, ?, ?, ?, ?)"
 
         cur = con.cursor()
-        cur.execute(query, (maori, english, category_id, definition, level, image,))
+        cur.execute(query, (maori, english, category_id, definition, level, image, time,))
         con.commit()
         con.close()
 
@@ -172,6 +173,20 @@ def category(category_id):
 
     return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
                            categories=categories())
+
+@app.route("/category/delete_no", methods=['POST', 'GET'])
+def no_delete():
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories())
+
+@app.route("/category/delete_yes", methods=['POST', 'GET'])
+def yes_delete(category_id):
+    con = create_connection(DATA_BASE)
+    query = "DELETE FROM dictionary WHERE category_id = ?;"
+    cur = con.cursor()
+    cur.execute(query, (category_id,))
+    con.close()
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories(), category_ids=int(category_id))
+
 
 
 @app.route("/word/<id>", methods=['POST', 'GET'])

@@ -44,7 +44,7 @@
     <div class="form-group">
         <div class="form-label">Edit Level:</div>
         {% for i in range(10) %}
-            <input type="radio" id="editlevel" name="editlevel" value="1" required>
+            <input type="radio" id="editlevel" name="editlevel" value="{{ i + 1 }}" required>
             <label for="{{ i + 1 }}">{{i + 1}}</label>
         {% endfor %}
     </div>
