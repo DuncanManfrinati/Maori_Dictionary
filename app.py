@@ -174,9 +174,11 @@ def category(category_id):
     return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
                            categories=categories())
 
+
 @app.route("/category/delete_no", methods=['POST', 'GET'])
 def no_delete():
     return render_template("home.html", logged_in=is_logged_in(), categories=categories())
+
 
 @app.route("/category/delete_yes", methods=['POST', 'GET'])
 def yes_delete(category_id):
@@ -184,25 +186,44 @@ def yes_delete(category_id):
     query = "DELETE FROM dictionary WHERE category_id = ?;"
     cur = con.cursor()
     cur.execute(query, (category_id,))
+    con.commit()
     con.close()
-    return render_template("home.html", logged_in=is_logged_in(), categories=categories(), category_ids=int(category_id))
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories(),
+                           category_ids=int(category_id))
 
+
+@app.route("/word/delete_no", methods=['POST', 'GET'])
+def no_word_delete():
+    return render_template("home.html", logged_in=is_logged_in(),
+                           categories=categories())
+
+
+@app.route("/word/delete_yes", methods=['POST', 'GET'])
+def yes_word_delete(id):
+    con = create_connection(DATA_BASE)
+    query = "DELETE FROM dictionary WHERE id = ?;"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    con.commit()
+    con.close()
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories(),
+                           id=id)
 
 
 @app.route("/word/<id>", methods=['POST', 'GET'])
 def dictionary(id):
     if request.method == 'POST':
-        editmaori = request.form.get('editmaori')
-        editenglish = request.form.get('editenglish')
-        editlevel = request.form.get('editlevel')
-        newtime = datetime.now()
+        edit_maori = request.form.get('editmaori')
+        edit_english = request.form.get('editenglish')
+        edit_level = request.form.get('editlevel')
+        new_time = datetime.now()
 
         con = create_connection(DATA_BASE)
         print(id)
         query = "UPDATE dictionary SET maori = ?, english = ?, level = ?, time = ? WHERE id=? ;"
 
         cur = con.cursor()
-        cur.execute(query, (editmaori, editenglish, editlevel, newtime,id))
+        cur.execute(query, (edit_maori, edit_english, edit_level, new_time, id))
         con.commit()
         con.close()
 

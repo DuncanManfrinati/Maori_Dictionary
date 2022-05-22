@@ -6,6 +6,10 @@
 
 {% block main %}
 
+<h4>As you are a ... you have the ability to remove this word. <br> Would you like to remove it? <br></h4>
+<h5><a href="/word/delete_yes">YES</a> or <a href="/word/delete_no">NO</a></h5>
+<br>
+
 <table class="word-table">
     <thead>
     <tr>
@@ -35,16 +39,16 @@
     <form class="dataForm" method="post" target="dictinary/{{id}}">
     <div class="form-group">
         <div class="form-label">Edit word:</div>
-        <div class="form-element"><input type="text" name="editmaori" id="editmaori" required></div>
+        <div class="form-element"><input type="text" name="edit_maori" id="edit_maori" required></div>
     </div>
     <div class="form-group">
         <div class="form-label">Edit Translation:</div>
-        <div class="form-element"><input type="text" name="editenglish" id="editenglish" required></div>
+        <div class="form-element"><input type="text" name="edit_english" id="edit_english" required></div>
     </div>
     <div class="form-group">
         <div class="form-label">Edit Level:</div>
         {% for i in range(10) %}
-            <input type="radio" id="editlevel" name="editlevel" value="{{ i + 1 }}" required>
+            <input type="radio" id="{{ i + 1 }}" name="edit_level" value="{{ i + 1 }}" required>
             <label for="{{ i + 1 }}">{{i + 1}}</label>
         {% endfor %}
     </div>
