@@ -7,7 +7,10 @@
 {% block main %}
 
 <h4>As you are a ... you have the ability to remove this category. <br> Would you like to remove it? <br></h4>
-<h5><a href="/category/delete_yes">YES</a> or <a href="/category/delete_no">NO</a></h5>
+
+{% for i in listr%}
+    {% if i[0] == id %}
+        <h5><a href="/category/delete_yes/{{ categories[0] }}">YES</a> or <a href="/category/delete_no">NO</a></h5>
 <br>
 <table class="word-table">
     <thead>

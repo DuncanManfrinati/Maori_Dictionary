@@ -180,16 +180,15 @@ def no_delete():
     return render_template("home.html", logged_in=is_logged_in(), categories=categories())
 
 
-@app.route("/category/delete_yes", methods=['POST', 'GET'])
+@app.route("/category/delete_yes/<category_id>", methods=['POST', 'GET'])
 def yes_delete(category_id):
     con = create_connection(DATA_BASE)
-    query = "DELETE FROM dictionary WHERE category_id = ?;"
+    query = "DELETE FROM categories WHERE id = ?"
     cur = con.cursor()
     cur.execute(query, (category_id,))
     con.commit()
     con.close()
-    return render_template("home.html", logged_in=is_logged_in(), categories=categories(),
-                           category_ids=int(category_id))
+    return render_template("home.html", logged_in=is_logged_in(), categories=categories(), category_ids=int(category_id))
 
 
 @app.route("/word/delete_no", methods=['POST', 'GET'])
@@ -198,14 +197,16 @@ def no_word_delete():
                            categories=categories())
 
 
-@app.route("/word/delete_yes", methods=['POST', 'GET'])
+@app.route("/word/delete_yes/<id>", methods=['POST', 'GET'])
 def yes_word_delete(id):
     con = create_connection(DATA_BASE)
-    query = "DELETE FROM dictionary WHERE id = ?;"
+    query = "DELETE FROM dictionary WHERE id = ?"
     cur = con.cursor()
     cur.execute(query, (id,))
     con.commit()
+    print()
     con.close()
+
     return render_template("home.html", logged_in=is_logged_in(), categories=categories(),
                            id=id)
 

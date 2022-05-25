@@ -1342,7 +1342,7 @@
     </column>
     <column id="495" parent="170" name="categories">
       <Position>2</Position>
-      <DataType>varchar(60)|0s</DataType>
+      <DataType>varchar(900)|0s</DataType>
     </column>
     <index id="496" parent="170" name="categories_categories_uindex">
       <ColNames>categories</ColNames>
