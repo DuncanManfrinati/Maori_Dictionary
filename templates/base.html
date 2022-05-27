@@ -23,11 +23,11 @@
         <ul>
             <li><a href="/">Home</a></li>
 
-            {% if logged_in %}
             {% for category in categories %}
             <li><a href="/category/{{ category[0] }}">{{ category[1] }}</a></li>
 
             {% endfor %}
+            {% if logged_in %}
             <li><p>--------------------------</p></li>
             <li><a href="/logout">Log Out</a></li>
 

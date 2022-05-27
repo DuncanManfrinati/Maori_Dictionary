@@ -7,8 +7,10 @@ from email.mime.text import MIMEText
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
+from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 DATA_BASE = "C:/Users/18308/OneDrive - Wellington College/13DTS/Maori_Dictionary/identifier.sqlite"
 app.secret_key = "duncan"
 
@@ -51,7 +53,7 @@ def login():
         email = request.form["email"].strip().lower()
         password = request.form["password"].strip()
 
-        query = """SELECT id, firstname, password FROM users WHERE email = ?"""
+        query = """SELECT id, firstname, password, teacher FROM users WHERE email = ?"""
         con = create_connection(DATA_BASE)
         cur = con.cursor()
         cur.execute(query, (email,))
@@ -62,6 +64,7 @@ def login():
             user_id = user_data[0][0]
             firstname = user_data[0][1]
             db_password = user_data[0][2]
+            teacher = user_data[0][3]
         except IndexError:
             return redirect("/login?error=Email+Invalid+or+Password+Incorrect")
             print("Email Invalid or Password Incorrect")
@@ -69,6 +72,7 @@ def login():
         session["email"] = email
         session["user_id"] = user_id
         session["first_name"] = firstname
+        session["teacher"] = teacher
         print(session)
 
         if db_password != password:
@@ -81,7 +85,7 @@ def login():
 
 
 @app.route('/signup', methods=['POST', 'GET'])
-# creating an account for the website
+# This link take the user to a form
 def signup():
     if request.method == 'POST':
         print(request.form)
@@ -90,6 +94,7 @@ def signup():
         email = request.form.get('email')
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
+        teacher = request.form.get('role')
 
         if password != confirmpassword:
             return redirect("/signup?error=Passwords+don't+match")
@@ -102,12 +107,17 @@ def signup():
         if len(email) < 6:
             return redirect("/signup?error=Email+is+not+valid")
 
+        hashed_password = bcrypt.generate_password_hash(password)
+
         con = create_connection(DATA_BASE)
 
-        query = "INSERT INTO users (firstname, lastname, email, password, ) VALUES(?, ?, ?, ?)"
+        query = "INSERT INTO users (id, firstname, lastname, email, password, teacher) VALUES(NULL,?, ?, ?, ?, ?)"
 
         cur = con.cursor()
-        cur.execute(query, (firstname, lastname, email, password,))
+        try:
+            cur.execute(query, (firstname, lastname, email, hashed_password, teacher))
+        except sqlite3.IntegrityError:
+            return redirect("/signup?error=Email+is+already+being+used")
         con.commit()
         con.close()
 
@@ -133,6 +143,15 @@ def is_logged_in():
         return True
 
 
+def is_teacher():
+    teacher = False
+    if session.get("teacher") is None:
+        teacher = False
+    elif session.get("teacher"):
+        teacher = True
+    return teacher
+
+
 def categories():
     con = create_connection(DATA_BASE)
     query = "SELECT id,categories FROM categories"
@@ -145,8 +164,12 @@ def categories():
     return category_ids
 
 
+# This link takes the words from the dictionary table and presents them for the user, the word present match with the
+# word's category
 @app.route("/category/<category_id>", methods=['POST', 'GET'])
 def category(category_id):
+    # This if statement allows the teacher to insert new words into the category that they are currently in by
+    # inserting the words information like, maori name, english name, english definition and the word's level.
     if request.method == 'POST':
         maori = request.form.get('maori')
         english = request.form.get('english')
@@ -171,49 +194,17 @@ def category(category_id):
     cat = cur.fetchall()
     con.close()
 
-    return render_template("categories.html", logged_in=is_logged_in(), category_ids=int(category_id), cat=cat,
+    return render_template("categories.html", is_teacher=is_teacher(), logged_in=is_logged_in(),
+                           category_ids=int(category_id), cat=cat,
                            categories=categories())
 
 
-@app.route("/category/delete_no", methods=['POST', 'GET'])
-def no_delete():
-    return render_template("home.html", logged_in=is_logged_in(), categories=categories())
-
-
-@app.route("/category/delete_yes/<category_id>", methods=['POST', 'GET'])
-def yes_delete(category_id):
-    con = create_connection(DATA_BASE)
-    query = "DELETE FROM categories WHERE id = ?"
-    cur = con.cursor()
-    cur.execute(query, (category_id,))
-    con.commit()
-    con.close()
-    return render_template("home.html", logged_in=is_logged_in(), categories=categories(), category_ids=int(category_id))
-
-
-@app.route("/word/delete_no", methods=['POST', 'GET'])
-def no_word_delete():
-    return render_template("home.html", logged_in=is_logged_in(),
-                           categories=categories())
-
-
-@app.route("/word/delete_yes/<id>", methods=['POST', 'GET'])
-def yes_word_delete(id):
-    con = create_connection(DATA_BASE)
-    query = "DELETE FROM dictionary WHERE id = ?"
-    cur = con.cursor()
-    cur.execute(query, (id,))
-    con.commit()
-    print()
-    con.close()
-
-    return render_template("home.html", logged_in=is_logged_in(), categories=categories(),
-                           id=id)
-
-
+# This link is the word link which when pressed present the word's information
 @app.route("/word/<id>", methods=['POST', 'GET'])
 def dictionary(id):
     if request.method == 'POST':
+        # This if statement connects to the form in "word.html" that allow the teacher to edit the word by
+        # changing/update the word's information through a form at the bottom of the page.
         edit_maori = request.form.get('editmaori')
         edit_english = request.form.get('editenglish')
         edit_level = request.form.get('editlevel')
@@ -236,7 +227,29 @@ def dictionary(id):
     word = cur.fetchall()
     con.close()
 
-    return render_template("word.html", logged_in=is_logged_in(), word=word, id=id,
+    return render_template("word.html", is_teacher=is_teacher(), logged_in=is_logged_in(), word=word, id=id,
+                           categories=categories())
+
+
+# This link is located above the word and allow the teacher to delete the word
+@app.route("/word/delete_yes/<id>", methods=['POST', 'GET'])
+def yes_word_delete(id):
+    con = create_connection(DATA_BASE)
+    query = "DELETE FROM dictionary WHERE id = ?"
+    cur = con.cursor()
+    cur.execute(query, (id,))
+    con.commit()
+    print()
+    con.close()
+
+    return render_template("home.html", is_teacher=is_teacher(), logged_in=is_logged_in(), categories=categories(),
+                           id=id)
+
+
+# This link is located above the word which when clicked does nothing to delete the word
+@app.route("/word/delete_no", methods=['POST', 'GET'])
+def no_word_delete():
+    return render_template("home.html", is_teacher=is_teacher(), logged_in=is_logged_in(),
                            categories=categories())
 
 

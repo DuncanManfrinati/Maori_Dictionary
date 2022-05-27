@@ -6,11 +6,6 @@
 
 {% block main %}
 
-<h4>As you are a ... you have the ability to remove this category. <br> Would you like to remove it? <br></h4>
-
-{% for i in listr%}
-    {% if i[0] == id %}
-        <h5><a href="/category/delete_yes/{{ categories[0] }}">YES</a> or <a href="/category/delete_no">NO</a></h5>
 <br>
 <table class="word-table">
     <thead>
@@ -31,6 +26,7 @@
     {% endfor %}
 </table>
 
+    {% if is_teacher %}
     <form class="dataForm" method="post" target="category/{{category_id}}">
     <div class="form-group">
         <div class="form-label">Maori word:</div>
@@ -50,6 +46,7 @@
             <input type="radio" id="{{ i + 1 }}" name="level" value="{{ i + 1 }}" required>
             <label for="{{ i + 1 }}">{{ i + 1 }}</label>
         {% endfor %}
+
     </div>
     <div class="error">{{ error }}</div>
     <div class="form-group">
@@ -57,5 +54,6 @@
         <div class="form-element"><input type="submit" value="Submit"></div>
     </div>
     </form>
+    {% endif %}
 {% endblock %}
 
