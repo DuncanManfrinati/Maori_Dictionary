@@ -5,7 +5,7 @@
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
-
+<!-- This table presents the words from the dictionary on the page -->
 <br>
 <table class="word-table">
     <thead>
@@ -25,7 +25,7 @@
     </tbody>
     {% endfor %}
 </table>
-
+<!-- This form is presented in the category tab allowing the user with teacher/editing privileges to add words -->
     {% if is_teacher %}
     <form class="dataForm" method="post" target="category/{{category_id}}">
     <div class="form-group">

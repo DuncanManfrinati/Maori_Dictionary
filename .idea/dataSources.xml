@@ -2,7 +2,7 @@
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
     <data-source source="LOCAL" name="identifier" group="maori" uuid="8198de95-2228-4c46-b5af-3bd34a3b9153">
-      <driver-ref>sqlite.xerial</driver-ref>
+      <driver-ref>0a6849e0-8498-4c8a-9542-1acefb20e836</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:C:\Users\18308\OneDrive - Wellington College\13DTS\Maori_Dictionary\identifier.sqlite</jdbc-url>

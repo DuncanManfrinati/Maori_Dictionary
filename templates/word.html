@@ -5,11 +5,13 @@
 {% block heading %}Maōri - English Dictionary{% endblock %}
 
 {% block main %}
+<!-- If a user with the correct privileges enters the word link they will have the ability to remove the word-->
 {% if is_teacher %}
 <h4>As you are a teacher you have the ability to remove this word. <br> Would you like to remove it? <br></h4>
 <h5><a href="/word/delete_yes/{{ word[0][0] }}">YES</a> or <a href="/word/delete_no">NO</a></h5>
 <br>
 {% endif %}
+<!-- This table displays the words' information ranging from its Maori name to the date it was added -->
 <table class="word-table">
     <thead>
     <tr>
@@ -35,6 +37,7 @@
     </tbody>
     {% endfor %}
 </table>
+<!-- If the user has sufficient privileges they can edit the word using this table on the webpage -->
     {% if is_teacher %}
     <form class="dataForm" method="post" target="dictinary/{{id}}">
     <div class="form-group">
